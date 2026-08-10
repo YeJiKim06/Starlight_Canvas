@@ -5,6 +5,7 @@ type StarNode = {
   x: number;
   y: number;
   label: string;
+  note: string;
   color: string;
   size: number;
   stamp?: string;
@@ -21,10 +22,10 @@ type ToolMode = 'add' | 'connect' | 'sticker';
 const palettes = ['#f7d76b', '#ff9ccf', '#8eeae6', '#b7a7ff', '#90d8ff', '#ffd59e'];
 
 const initialStars: StarNode[] = [
-  { id: 1, x: 220, y: 180, label: '아이디어', color: '#f7d76b', size: 120 },
-  { id: 2, x: 500, y: 260, label: '실험', color: '#ff9ccf', size: 110 },
-  { id: 3, x: 360, y: 420, label: '콘셉트', color: '#8eeae6', size: 106 },
-  { id: 4, x: 650, y: 430, label: '협업', color: '#b7a7ff', size: 118 },
+  { id: 1, x: 220, y: 180, label: '아이디어', note: '사용자 여정을 재해석해보자', color: '#f7d76b', size: 120 },
+  { id: 2, x: 500, y: 260, label: '실험', note: '초기 검증 포인트 정리', color: '#ff9ccf', size: 110 },
+  { id: 3, x: 360, y: 420, label: '콘셉트', note: '감성적인 밤하늘 경험', color: '#8eeae6', size: 106 },
+  { id: 4, x: 650, y: 430, label: '협업', note: '리모트 협업용 플로우', color: '#b7a7ff', size: 118 },
 ];
 
 const initialEdges: Edge[] = [
@@ -119,6 +120,7 @@ function App() {
       x,
       y,
       label: `아이디어 ${nodes.length + 1}`,
+      note: '새로 떠오른 생각을 적어보세요',
       color: palettes[Math.floor(Math.random() * palettes.length)],
       size: nextSize,
     };
@@ -217,6 +219,28 @@ function App() {
     setPromptIndex((prev) => (prev + 1) % prompts.length);
   };
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.key === 'Delete' || event.key === 'Backspace') && selectedId !== null) {
+        event.preventDefault();
+        deleteSelectedNode();
+      }
+
+      if (event.key === 'Escape') {
+        setSelectedId(null);
+      }
+
+      if (event.key.toLowerCase() === 'n') {
+        const centerX = 420;
+        const centerY = 260;
+        addNodeAt(centerX, centerY);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedId, nodes, pan, scale]);
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -303,6 +327,7 @@ function App() {
               onClick={() => setSelectedId(node.id)}
             >
               <span className="node-label">{node.label}</span>
+              {node.note ? <span className="node-note">{node.note}</span> : null}
               <span className="node-glow" aria-hidden="true" />
               {node.stamp ? <span className="node-stamp">{node.stamp}</span> : null}
             </div>
@@ -333,6 +358,17 @@ function App() {
                 value={selectedNode.label}
                 onChange={(event) =>
                   updateNode(selectedNode.id, (node) => ({ ...node, label: event.target.value || '새 별' }))
+                }
+              />
+            </label>
+
+            <label className="field-label">
+              메모
+              <textarea
+                value={selectedNode.note}
+                rows={3}
+                onChange={(event) =>
+                  updateNode(selectedNode.id, (node) => ({ ...node, note: event.target.value }))
                 }
               />
             </label>
