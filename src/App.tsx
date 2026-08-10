@@ -56,6 +56,8 @@ function App() {
   const [draggingNode, setDraggingNode] = useState<{ id: number; offsetX: number; offsetY: number } | null>(null);
   const [connectFrom, setConnectFrom] = useState<number | null>(null);
 
+  const selectedNode = nodes.find((node) => node.id === selectedId) ?? null;
+
   useEffect(() => {
     if (!draggingNode) return;
 
@@ -91,6 +93,12 @@ function App() {
     };
   }, [draggingNode, pan, scale]);
 
+  useEffect(() => {
+    if (selectedId === null && nodes.length > 0) {
+      setSelectedId(nodes[0].id);
+    }
+  }, [nodes, selectedId]);
+
   const toWorldPosition = (clientX: number, clientY: number) => {
     const board = canvasRef.current;
     if (!board) return { x: 0, y: 0 };
@@ -103,7 +111,7 @@ function App() {
   };
 
   const addNodeAt = (x: number, y: number) => {
-    const nextId = Date.now();
+    const nextId = Date.now() + Math.round(Math.random() * 1000);
     const nextSize = 100 + Math.random() * 40;
 
     const newNode: StarNode = {
@@ -119,6 +127,17 @@ function App() {
     setSelectedId(nextId);
   };
 
+  const updateNode = (id: number, updater: (node: StarNode) => StarNode) => {
+    setNodes((prev) => prev.map((node) => (node.id === id ? updater(node) : node)));
+  };
+
+  const deleteSelectedNode = () => {
+    if (selectedId === null) return;
+    setNodes((prev) => prev.filter((node) => node.id !== selectedId));
+    setEdges((prev) => prev.filter((edge) => edge.from !== selectedId && edge.to !== selectedId));
+    setSelectedId((prev) => (prev === null ? null : nodes.find((node) => node.id !== prev)?.id ?? null));
+  };
+
   const handleCanvasPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.target !== event.currentTarget) return;
     setIsPanning(true);
@@ -126,10 +145,6 @@ function App() {
 
   const handleCanvasPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!isPanning) return;
-    const board = canvasRef.current;
-    if (!board) return;
-
-    const rect = board.getBoundingClientRect();
     setPan((prev) => ({
       x: prev.x + event.movementX,
       y: prev.y + event.movementY,
@@ -157,6 +172,7 @@ function App() {
     if (toolMode === 'connect') {
       if (connectFrom === null) {
         setConnectFrom(node.id);
+        setSelectedId(node.id);
         return;
       }
 
@@ -169,6 +185,7 @@ function App() {
       }
 
       setConnectFrom(null);
+      setSelectedId(node.id);
       return;
     }
 
@@ -184,6 +201,7 @@ function App() {
             : item
         )
       );
+      setSelectedId(node.id);
       return;
     }
 
@@ -305,6 +323,51 @@ function App() {
             </button>
           ))}
         </aside>
+
+        {selectedNode ? (
+          <aside className="inspector-panel">
+            <div className="inspector-header">별 편집</div>
+            <label className="field-label">
+              제목
+              <input
+                value={selectedNode.label}
+                onChange={(event) =>
+                  updateNode(selectedNode.id, (node) => ({ ...node, label: event.target.value || '새 별' }))
+                }
+              />
+            </label>
+
+            <div className="field-label">
+              색상
+              <div className="swatches">
+                {palettes.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={`swatch ${selectedNode.color === color ? 'selected' : ''}`}
+                    style={{ background: color }}
+                    onClick={() => updateNode(selectedNode.id, (node) => ({ ...node, color }))}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="field-label">
+              크기
+              <input
+                type="range"
+                min={80}
+                max={180}
+                value={selectedNode.size}
+                onChange={(event) =>
+                  updateNode(selectedNode.id, (node) => ({ ...node, size: Number(event.target.value) }))
+                }
+              />
+            </div>
+
+            <button className="delete-button" onClick={deleteSelectedNode}>별 삭제</button>
+          </aside>
+        ) : null}
 
         <div className="capsule-machine" aria-label="prompt capsule machine" onClick={cyclePrompt}>
           <div className="machine-top">🎰</div>
