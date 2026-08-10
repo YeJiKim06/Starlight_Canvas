@@ -56,6 +56,7 @@ function App() {
   const [isPanning, setIsPanning] = useState(false);
   const [draggingNode, setDraggingNode] = useState<{ id: number; offsetX: number; offsetY: number } | null>(null);
   const [connectFrom, setConnectFrom] = useState<number | null>(null);
+  const [pointerWorld, setPointerWorld] = useState({ x: 0, y: 0 });
 
   const selectedNode = nodes.find((node) => node.id === selectedId) ?? null;
 
@@ -146,6 +147,9 @@ function App() {
   };
 
   const handleCanvasPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const nextWorld = toWorldPosition(event.clientX, event.clientY);
+    setPointerWorld(nextWorld);
+
     if (!isPanning) return;
     setPan((prev) => ({
       x: prev.x + event.movementX,
@@ -310,6 +314,18 @@ function App() {
                 />
               );
             })}
+
+            {toolMode === 'connect' && connectFrom !== null ? (() => {
+              const fromNode = nodes.find((node) => node.id === connectFrom);
+              if (!fromNode) return null;
+
+              return (
+                <path
+                  className="preview-path"
+                  d={`M ${fromNode.x} ${fromNode.y} Q ${(fromNode.x + pointerWorld.x) / 2} ${(fromNode.y + pointerWorld.y) / 2 - 18} ${pointerWorld.x} ${pointerWorld.y}`}
+                />
+              );
+            })() : null}
           </svg>
 
           {nodes.map((node) => (
@@ -348,6 +364,12 @@ function App() {
             </button>
           ))}
         </aside>
+
+        <div className="status-badge">
+          {toolMode === 'add' && '새 별을 더블 클릭해 추가해보세요'}
+          {toolMode === 'sticker' && '별에 반응 스티커를 남겨보세요'}
+          {toolMode === 'connect' && (connectFrom !== null ? '연결할 별을 하나 더 선택하세요' : '연결할 첫 별을 선택하세요')}
+        </div>
 
         {selectedNode ? (
           <aside className="inspector-panel">
