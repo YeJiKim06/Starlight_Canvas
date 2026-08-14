@@ -470,10 +470,6 @@ function App() {
           }}
         >
           <div className="machine-top"><GiSparkles size={28} /></div>
-          <div className="machine-body">
-            <div className="slot-light" />
-            <div className="lever" />
-          </div>
           <div className="prompt-card">{prompts[promptIndex]}</div>
           {isBursting ? <div className="capsule-burst" aria-hidden="true">✦ ✦ ✦</div> : null}
         </div>
