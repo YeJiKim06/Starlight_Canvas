@@ -325,7 +325,7 @@ function App() {
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
           }}
         >
-          <svg className="connections" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet" aria-label="idea connections">
+          <svg className="connections" style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} aria-label="idea connections">
             {edges.map((edge) => {
               const from = nodes.find((node) => node.id === edge.from);
               const to = nodes.find((node) => node.id === edge.to);
