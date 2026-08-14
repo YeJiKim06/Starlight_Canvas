@@ -251,6 +251,31 @@ button {
   animation: popStamp 0.6s ease;
 }
 
+.remote-cursor {
+  position: absolute;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 12px rgba(255,255,255,0.3));
+  animation: cursorFloat 3.3s ease-in-out infinite;
+}
+
+.remote-cursor span {
+  font-size: 1.5rem;
+}
+
+.remote-cursor i {
+  font-style: normal;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(25, 22, 39, 0.7);
+  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 0.62rem;
+  color: #efe9ff;
+}
+
 .cursor {
   position: absolute;
   z-index: 8;
@@ -273,10 +298,10 @@ button {
 .tool-panel {
   position: absolute;
   right: 34px;
-  bottom: 135px;
+  bottom: 270px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   z-index: 9;
 }
 
@@ -324,6 +349,8 @@ button {
   left: 26px;
   bottom: 26px;
   width: 260px;
+  max-height: 360px;
+  overflow-y: auto;
   padding: 16px 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
@@ -411,6 +438,20 @@ button {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+}
+
+.capsule-machine.bursting .machine-top,
+.capsule-machine.bursting .machine-body {
+  animation: capsuleBounce 0.6s ease;
+}
+
+.capsule-burst {
+  position: absolute;
+  inset: -25px -12px auto auto;
+  color: #fff4a8;
+  font-size: 1.3rem;
+  animation: burstPop 0.7s ease;
+  text-shadow: 0 0 18px rgba(255, 234, 135, 0.8);
 }
 
 .machine-top {
@@ -502,6 +543,18 @@ button {
   0% { transform: scale(0.5); opacity: 0; }
   60% { transform: scale(1.25); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes capsuleBounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+  50% { transform: translateY(3px); }
+}
+
+@keyframes burstPop {
+  0% { opacity: 0; transform: scale(0.5) translateY(10px); }
+  30% { opacity: 1; transform: scale(1.2) translateY(-4px); }
+  100% { opacity: 0; transform: scale(1.5) translateY(-18px); }
 }
 
 @media (max-width: 720px) {

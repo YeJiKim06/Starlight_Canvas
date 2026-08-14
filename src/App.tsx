@@ -43,6 +43,12 @@ const prompts = [
 ];
 
 const stampSet = ['✨', '⭐', '👍', '❓', '💡'];
+const collaboratorCursors = [
+  { id: 'A', x: 700, y: 220, emoji: '👾', label: 'A' },
+  { id: 'J', x: 760, y: 330, emoji: '👨‍🚀', label: 'J' },
+  { id: 'M', x: 620, y: 500, emoji: '🪐', label: 'M' },
+  { id: 'Y', x: 810, y: 470, emoji: '👻', label: 'Y' },
+];
 
 function App() {
   const canvasRef = useRef<HTMLDivElement | null>(null);
@@ -57,6 +63,7 @@ function App() {
   const [draggingNode, setDraggingNode] = useState<{ id: number; offsetX: number; offsetY: number } | null>(null);
   const [connectFrom, setConnectFrom] = useState<number | null>(null);
   const [pointerWorld, setPointerWorld] = useState({ x: 0, y: 0 });
+  const [isBursting, setIsBursting] = useState(false);
 
   const selectedNode = nodes.find((node) => node.id === selectedId) ?? null;
 
@@ -245,6 +252,12 @@ function App() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [selectedId, nodes, pan, scale]);
 
+  useEffect(() => {
+    if (!isBursting) return;
+    const timer = window.setTimeout(() => setIsBursting(false), 650);
+    return () => window.clearTimeout(timer);
+  }, [isBursting]);
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -291,6 +304,17 @@ function App() {
             />
           ))}
         </div>
+
+        {collaboratorCursors.map((cursor) => (
+          <div
+            key={cursor.id}
+            className="remote-cursor"
+            style={{ left: `${cursor.x}px`, top: `${cursor.y}px` }}
+          >
+            <span>{cursor.emoji}</span>
+            <i>{cursor.label}</i>
+          </div>
+        ))}
 
         <div className="cursor cursor-left">👾</div>
         <div className="cursor cursor-right">👨‍🚀</div>
@@ -427,13 +451,21 @@ function App() {
           </aside>
         ) : null}
 
-        <div className="capsule-machine" aria-label="prompt capsule machine" onClick={cyclePrompt}>
+        <div
+          className={`capsule-machine ${isBursting ? 'bursting' : ''}`}
+          aria-label="prompt capsule machine"
+          onClick={() => {
+            setIsBursting(true);
+            cyclePrompt();
+          }}
+        >
           <div className="machine-top">🎰</div>
           <div className="machine-body">
             <div className="slot-light" />
             <div className="lever" />
           </div>
           <div className="prompt-card">{prompts[promptIndex]}</div>
+          {isBursting ? <div className="capsule-burst" aria-hidden="true">✦ ✦ ✦</div> : null}
         </div>
       </div>
     </div>
