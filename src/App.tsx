@@ -397,7 +397,16 @@ function App() {
 
         {selectedNode ? (
           <aside className="inspector-panel">
-            <div className="inspector-header">별 편집</div>
+            <div className="inspector-header">
+              별 편집
+              <button 
+                className="inspector-close-btn"
+                onClick={() => deleteSelectedNode()}
+                title="삭제"
+              >
+                🗑️
+              </button>
+            </div>
             <label className="field-label">
               제목
               <input
@@ -447,8 +456,6 @@ function App() {
                 }
               />
             </div>
-
-            <button className="delete-button" onClick={deleteSelectedNode}>별 삭제</button>
           </aside>
         ) : null}
 
