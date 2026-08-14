@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MdDeleteOutline } from 'react-icons/md';
+import { GiSparkles } from 'react-icons/gi';
 
 type StarNode = {
   id: number;
@@ -468,7 +469,7 @@ function App() {
             cyclePrompt();
           }}
         >
-          <div className="machine-top">🎰</div>
+          <div className="machine-top"><GiSparkles size={28} /></div>
           <div className="machine-body">
             <div className="slot-light" />
             <div className="lever" />
