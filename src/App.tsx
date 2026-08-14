@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { MdDeleteOutline } from 'react-icons/md';
 
 type StarNode = {
   id: number;
@@ -404,7 +405,7 @@ function App() {
                 onClick={() => deleteSelectedNode()}
                 title="삭제"
               >
-                🗑️
+                <MdDeleteOutline size={18} />
               </button>
             </div>
             <label className="field-label">
