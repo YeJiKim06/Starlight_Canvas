@@ -401,6 +401,7 @@ function App() {
             <label className="field-label">
               제목
               <input
+                style={{margin: "0 0 0 5px"}}
                 value={selectedNode.label}
                 onChange={(event) =>
                   updateNode(selectedNode.id, (node) => ({ ...node, label: event.target.value || '새 별' }))

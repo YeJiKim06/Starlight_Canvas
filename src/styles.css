@@ -359,8 +359,9 @@ button {
 }
 
 .inspector-header {
-  margin-bottom: 12px;
-  font-size: 0.8rem;
+  margin-bottom: 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   color: #d7c7ff;
   text-transform: uppercase;
@@ -368,9 +369,10 @@ button {
 
 .field-label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   color: #f3ecff;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 500;
 }
 
 .field-label input[type='text'],
@@ -384,11 +386,12 @@ button {
 .field-label textarea {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.05);
   color: white;
   resize: vertical;
   font: inherit;
+  font-size: 0.85rem;
 }
 
 .field-label textarea {
